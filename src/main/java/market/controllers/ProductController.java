@@ -54,21 +54,34 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        productService.save(product);
-        return new ResponseEntity<>(product, headers, HttpStatus.CREATED);
+        Product checkProduct = productService.getById(product.getId());
+        if (checkProduct == null){
+            productService.save(product);
+            return new ResponseEntity<>(product, headers, HttpStatus.CREATED);
+        }
+        else
+            return new ResponseEntity<>(checkProduct, headers, HttpStatus.CONFLICT);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Product> updateProduct(@RequestBody @Valid Product product, UriComponentsBuilder builder) {
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Product> updateProduct(@PathVariable("id") Integer id, @RequestBody @Valid Product product, UriComponentsBuilder builder) {
         HttpHeaders headers = new HttpHeaders();
 
         if (product == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        productService.save(product);
+        Product checkProduct = productService.getById(id);
 
-        return new ResponseEntity<>(product, headers, HttpStatus.OK);
+        if(checkProduct != null){
+            checkProduct.setNameProduct(product.getNameProduct());
+            checkProduct.setCost(product.getCost());
+            checkProduct.setCategory(product.getCategory());
+            productService.save(checkProduct);
+            return new ResponseEntity<>(product, headers, HttpStatus.OK);
+        }
+        else
+            return  new ResponseEntity<>(headers, HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
