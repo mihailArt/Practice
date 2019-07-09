@@ -18,13 +18,12 @@ public class PurchaseService {
         return purchaseRepository.findById(id);
     }
 
-    public void save(Purchase purchase){
-        purchaseRepository.save(purchase);
+    public Purchase save(Purchase purchase){
+        return purchaseRepository.save(purchase);
     }
 
-    public void delete(int id){
-        Purchase purchase = purchaseRepository.findById(id);
-        purchaseRepository.delete(purchase);
+    public void deleteById(int id){
+        purchaseRepository.deleteById(id);
     }
 
     public List<Purchase> getAll(){

@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -63,38 +62,20 @@ public class PurchaseController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Purchase> updatePurchase(@PathVariable("id") Integer id, @RequestBody @Valid Purchase purchase, UriComponentsBuilder builder) {
+    public ResponseEntity<Purchase> updatePurchase(@RequestBody @Valid Purchase purchase) {
         HttpHeaders headers = new HttpHeaders();
 
         if (purchase == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Purchase checkPurchase = purchaseService.getById(id);
-
-        if(checkPurchase != null){
-            checkPurchase.setProduct(purchase.getProduct());
-            checkPurchase.setClient(purchase.getClient());
-            checkPurchase.setDate(purchase.getDate());
-            checkPurchase.setCost(purchase.getCost());
-            checkPurchase.setNumber(purchase.getNumber());
-            purchaseService.save(checkPurchase);
-            return new ResponseEntity<>(purchase, headers, HttpStatus.OK);
-        }
-        else
-            return  new ResponseEntity<>( headers, HttpStatus.NOT_FOUND);
+        Purchase result = purchaseService.save(purchase);
+        return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Purchase> deletePurchase(@PathVariable("id") Integer id) {
-        Purchase purchase = purchaseService.getById(id);
-
-        if (purchase == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        purchaseService.delete(id);
-
+        purchaseService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

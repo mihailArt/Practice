@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -64,37 +63,19 @@ public class ClientController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Client> updateClient(@PathVariable("id") Integer id, @RequestBody @Valid Client client) {
+    public ResponseEntity<Client> updateClient(@RequestBody @Valid Client client) {
         HttpHeaders headers = new HttpHeaders();
 
         if (client == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        Client checkClient = clientService.getById(id);
-
-        if(checkClient != null){
-            checkClient.setClientName(client.getClientName());
-            checkClient.setPassword(client.getPassword());
-            clientService.save(checkClient);
-            return new ResponseEntity<>(client, headers, HttpStatus.OK);
-        }
-        else
-            return  new ResponseEntity<>( headers, HttpStatus.NOT_FOUND);
-
-
+        Client result = clientService.save(client);
+        return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Client> deleteClient(@PathVariable("id") Integer id) {
-        Client client = clientService.getById(id);
-
-        if (client == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        clientService.delete(id);
-
+        clientService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

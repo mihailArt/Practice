@@ -18,13 +18,12 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public void save(Product product){
-        productRepository.save(product);
+    public Product save(Product product){
+        return productRepository.save(product);
     }
 
-    public void delete(int id){
-        Product product = productRepository.findById(id);
-        productRepository.delete(product);
+    public void deleteById(int id){
+        productRepository.deleteById(id);
     }
 
     public List<Product> getAll(){

@@ -16,13 +16,12 @@ public class ClientService {
         return clientRepository.findById(id);
     }
 
-    public void save(Client client){
-        clientRepository.save(client);
+    public Client save(Client client){
+         return clientRepository.save(client);
     }
 
-    public void delete(int id){
-        Client client = clientRepository.findById(id);
-        clientRepository.delete(client);
+    public void deleteById(int id){
+        clientRepository.deleteById(id);
     }
 
     public List<Client> getAll(){
