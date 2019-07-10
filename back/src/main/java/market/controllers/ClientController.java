@@ -1,7 +1,7 @@
 package market.controllers;
 
-import market.entity.Purchase;
-import market.service.PurchaseService;
+import market.entity.Client;
+import market.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,70 +13,73 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/purchases")
-public class PurchaseController {
+@RequestMapping("/clients")
+public class ClientController {
+
     @Autowired
-    private PurchaseService purchaseService;
+    ClientService clientService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Purchase> getPurchase(@PathVariable("id") Integer id) {
+    public ResponseEntity<Client> getClient(@PathVariable("id") Integer id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Purchase purchase = purchaseService.getById(id);
+        Client client = clientService.getById(id);
 
-        if (purchase == null) {
+        if (client == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(purchase, HttpStatus.OK);
+        return new ResponseEntity<>(client, HttpStatus.OK);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<List<Purchase>> getAllPurchases() {
-        List<Purchase> purchases = purchaseService.getAll();
+    public ResponseEntity<List<Client>> getAllClients() {
+        List<Client> clients = clientService.getAll();
 
-        if (purchases.isEmpty()) {
+        if (clients.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(purchases, HttpStatus.OK);
+        return new ResponseEntity<>(clients, HttpStatus.OK);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Purchase> savePurchase(@RequestBody @Valid Purchase purchase) {
+    public ResponseEntity<Client> saveClient(@RequestBody @Valid Client client) {
         HttpHeaders headers = new HttpHeaders();
 
-        if (purchase == null) {
+        if (client == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Purchase checkPurchase = purchaseService.getById(purchase.getId());
-        if (checkPurchase == null){
-            purchaseService.save(purchase);
-            return new ResponseEntity<>(purchase, headers, HttpStatus.CREATED);
+        Client checkClient = clientService.getById(client.getId());
+        if (checkClient == null){
+            clientService.save(client);
+            return new ResponseEntity<>(client, headers, HttpStatus.CREATED);
         }
         else
-            return new ResponseEntity<>(checkPurchase, headers, HttpStatus.CONFLICT);
+            return new ResponseEntity<>(checkClient, headers, HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Purchase> updatePurchase(@RequestBody @Valid Purchase purchase) {
+    public ResponseEntity<Client> updateClient(@RequestBody @Valid Client client) {
         HttpHeaders headers = new HttpHeaders();
 
-        if (purchase == null) {
+        if (client == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        Purchase result = purchaseService.save(purchase);
+        Client result = clientService.save(client);
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Purchase> deletePurchase(@PathVariable("id") Integer id) {
-        purchaseService.deleteById(id);
+    public ResponseEntity<Client> deleteClient(@PathVariable("id") Integer id) {
+        try {
+            clientService.deleteById(id);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.LOCKED);
+        }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

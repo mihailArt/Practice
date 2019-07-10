@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, ButtonGroup, Container, Table } from 'reactstrap';
+import { Button, ButtonGroup, Container, Table} from 'reactstrap';
 import AppNavbar from '../AppNavbar';
 import { Link } from 'react-router-dom';
 
@@ -7,7 +7,7 @@ class ProductList extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {products: [], isLoading: true};
+    this.state = {products: [], isLoading: true, show: false};
     this.remove = this.remove.bind(this);
   }
 
@@ -26,14 +26,19 @@ class ProductList extends Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       }
-    }).then(() => {
-      let updatedProducts = [...this.state.products].filter(i => i.id !== id);
-      this.setState({products: updatedProducts});
-    });
+    }).then(function(response){
+        if(response.error !== 423){
+            let updatedProducts = [...this.state.products].filter(i => i.id !== id);
+            this.setState({products: updatedProducts});
+        }
+        else{
+            this.setState({show: true});
+        }
+    }).catch(alert("Невозможно удалить запись"));
   }
 
   render() {
-    const {products, isLoading} = this.state;
+    const {products, isLoading, show} = this.state;
 
     if (isLoading) {
       return <p>Loading...</p>;
@@ -76,6 +81,7 @@ class ProductList extends Component {
             </tbody>
           </Table>
         </Container>
+        {this.state.show ? alert("ERROR") : null }
       </div>
     );
   }

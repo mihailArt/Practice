@@ -76,7 +76,11 @@ public class ProductController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Product> deleteProduct(@PathVariable("id") Integer id) {
-        productService.deleteById(id);
+        try {
+            productService.deleteById(id);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.LOCKED);
+        }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

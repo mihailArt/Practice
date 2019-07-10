@@ -14,11 +14,11 @@ import java.util.Date;
 @ToString
 public class Purchase extends BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne
     @JoinColumn (name="idproduct")
     private Product product;
 
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne
     @JoinColumn (name="idclient")
     private Client client;
 

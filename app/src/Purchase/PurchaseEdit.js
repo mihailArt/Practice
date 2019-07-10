@@ -3,6 +3,8 @@ import { Link, withRouter } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import AppNavbar from '../AppNavbar';
 
+import Select from 'react-select'
+
 class PurchaseEdit extends Component {
 
   emptyItem = {
@@ -16,7 +18,8 @@ class PurchaseEdit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      item: this.emptyItem
+      item: this.emptyItem,
+      clients: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -27,6 +30,9 @@ class PurchaseEdit extends Component {
       const purchase = await (await fetch(`/purchases/${this.props.match.params.id}`)).json();
       this.setState({item: purchase});
     }
+    fetch('clients')
+          .then(response => response.json())
+          .then(data => this.setState({clients: data}));
   }
 
   handleChange(event) {
@@ -66,7 +72,7 @@ class PurchaseEdit extends Component {
   }
 
   render() {
-    const {item} = this.state;
+    const {item, clients} = this.state;
     const title = <h2>{item.id ? 'Edit purchase' : 'Add purchase'}</h2>;
 
     return <div>
@@ -76,13 +82,10 @@ class PurchaseEdit extends Component {
         <Form onSubmit={this.handleSubmit}>
           <FormGroup>
               <Label for="product">Product</Label>
-              <Input type="text" name="product" id="product" value={item.product.id || ''}
-                    onChange={this.handleChange} autoComplete="product"/>
           </FormGroup>
           <FormGroup>
               <Label for="client">Client</Label>
-              <Input type="text" name="client" id="client" value={item.client.id || ''}
-                     onChange={this.handleChange} autoComplete="client"/>
+              <Select options = {clients}/>
            </FormGroup>
           <FormGroup>
               <Label for="data">Data</Label>
@@ -101,7 +104,7 @@ class PurchaseEdit extends Component {
                      onChange={this.handleChange} autoComplete="number"/>
           </FormGroup>
             <Button color="primary" type="submit">Save</Button>{' '}
-            <Button color="secondary" tag={Link} to="/clients">Cancel</Button>
+            <Button color="secondary" tag={Link} to="/purchases">Cancel</Button>
           </FormGroup>
         </Form>
       </Container>
